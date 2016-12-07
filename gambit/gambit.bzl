@@ -46,13 +46,22 @@ _gambit_cc_link = rule(implementation = _gambit_cc_link_impl,
     }
 )
 
-def gambit_library(name, srcs=[], deps=[], cdeps=[], *args, **kwargs): 
+
+def _gambit_impl(name, cc_rule, srcs=[], deps=[], csrcs=[], cdeps=[], *args, **kwargs):
   _gambit_cc_link(name = name + "_gengambit",
       srcs=srcs,
       deps=[x + "_gengambit" for x in deps])
 
-  native.cc_library(
+  cc_rule(
       name=name,
-      srcs=[name + "_gengambit"],
+      srcs=csrcs + [name + "_gengambit"],
       deps=cdeps + deps + ["@gambit//:gambit"],
       *args, **kwargs)
+
+
+def gambit_library(*args, **kwargs): 
+  _gambit_impl(cc_rule=native.cc_library, *args, **kwargs)
+
+
+def gambit_binary(*args, **kwargs): 
+  _gambit_impl(cc_rule=native.cc_binary, *args, **kwargs)
