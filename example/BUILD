@@ -12,11 +12,6 @@ gambit_library(
 )
 
 gambit_binary(
-  name = "f2.o1",
-  srcs = ["f2.scm"],
-)
-
-gambit_binary(
   name = "main",
   srcs = ["main.scm"],
   deps = [":f1a", ":f2"]
