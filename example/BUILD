@@ -1,5 +1,4 @@
-load("//gambit:gambit.bzl", "gambit_library")
-load("//gambit:gambit.bzl", "gambit_binary")
+load("//gambit:gambit.bzl", "gambit_library", "gambit_binary")
 
 gambit_library(
   name = "f1a",
@@ -9,6 +8,11 @@ gambit_library(
 
 gambit_library(
   name = "f2",
+  srcs = ["f2.scm"],
+)
+
+gambit_binary(
+  name = "f2.o1",
   srcs = ["f2.scm"],
 )
 
