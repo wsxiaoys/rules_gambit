@@ -1,9 +1,14 @@
 load("//gambit:gambit.bzl", "gambit_library", "gambit_binary")
 
+cc_library(
+  name = "f1b",
+  srcs = ["f1b.c"]
+)
+
 gambit_library(
   name = "f1a",
   srcs = ["f1a.scm"],
-  csrcs = ["f1b.c"],
+  cdeps = [":f1b"],
 )
 
 gambit_library(
