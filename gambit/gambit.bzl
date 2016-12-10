@@ -11,20 +11,20 @@ def _gambit_cc_gen_impl(ctx):
   gsc_args = ["-:~~=.,~~lib={}/lib".format(ctx.attr._gsc_deps.label.workspace_root)]
 
   inputs = [f for src in ctx.attr.srcs for f in src.files]
-  includes = [f for inc in ctx.attr.incs for f in inc.files]
+  headers = [f for hdr in ctx.attr.hdrs for f in hdr.files]
   outputs = [ctx.new_file(f.short_path + ".c") for f in inputs]
   for input, output in zip(inputs, outputs):
     ctx.action(
         executable = ctx.executable._gsc,
         arguments = gsc_args + ["-o", output.path, "-c", input.path],
-        inputs = list(ctx.attr._gsc_deps.files | [input] | includes),
+        inputs = list(ctx.attr._gsc_deps.files | [input] | headers),
         outputs = [output])
   return struct(files=set(outputs))
 
 _gambit_cc_gen = rule(implementation = _gambit_cc_gen_impl,
     attrs = {
       'srcs': attr.label_list(allow_files=True),
-      'incs': attr.label_list(allow_files=True),
+      'hdrs': attr.label_list(allow_files=True),
       "_gsc" : attr.label(default=Label("@gambit//:gsc"), executable=True, cfg="host"),
       "_gsc_deps" : attr.label(default=Label("@gambit//:gambit_compile_deps")),
     }
@@ -64,8 +64,13 @@ _gambit_cc_link = rule(implementation = _gambit_cc_link_impl,
     },
 )
 
-def _gambit_core(name, srcs, deps, incs, dynamic):
-  _gambit_cc_gen(name = name + "_gencc", srcs=srcs, incs=incs)
+def _gambit_core(name, srcs, deps, hdrs, dynamic):
+  native.filegroup(
+      name = name + "_geninc",
+      srcs = hdrs)
+  _gambit_cc_gen(name = name + "_gencc",
+      srcs=srcs,
+      hdrs=[x + "_geninc" for x in deps] + [name + "_geninc"])
   _gambit_cc_link(
       name = name + "_genlink",
       src = name + "_gencc",
@@ -73,27 +78,27 @@ def _gambit_core(name, srcs, deps, incs, dynamic):
       deps=[x + "_genlink" for x in deps])
 
 
-def _gambit_dynamic(name, srcs=[], deps=[], incs=[], csrcs=[], cdeps=[], copts=[], *args, **kwargs):
-  _gambit_core(name, srcs, deps, incs, True)
-  native.cc_library(
-      name=name + "_dynamic",
-      srcs=csrcs + [name + "_gencc", name + "_genlink"],
+def _gambit_dynamic(name, srcs=[], deps=[], hdrs=[], cdeps=[], copts=[], *args, **kwargs):
+  _gambit_core(name, srcs, deps, hdrs, True)
+  native.cc_binary(
+      name="lib" + name + ".so",
+      srcs= [name + "_gencc", name + "_genlink"] if len(srcs) else [],
       deps=cdeps + deps + ["@gambit//:gambit"],
       copts=copts + ["-D___DYNAMIC"],
       linkstatic=0,
       *args, **kwargs)
   native.genrule(
       name=name + "_copy",
-      srcs=[name + "_dynamic"],
+      srcs=["lib" + name + ".so"],
       outs=[name],
       output_to_bindir=True,
-      cmd="cp $$(echo $(SRCS) | cut -d ' ' -f 2) $@")
+      cmd="cp $< $@")
 
-def _gambit_static(cc_rule, name, srcs=[], deps=[], incs=[], csrcs=[], cdeps=[], *args, **kwargs):
-  _gambit_core(name, srcs, deps, incs, False)
+def _gambit_static(cc_rule, name, srcs=[], deps=[], hdrs=[], cdeps=[], *args, **kwargs):
+  _gambit_core(name, srcs, deps, hdrs, False)
   cc_rule(
       name=name,
-      srcs=csrcs + [name + "_gencc", name + "_genlink"],
+      srcs=[name + "_gencc", name + "_genlink"] if len(srcs) else [],
       deps=cdeps + deps + ["@gambit//:gambit"],
       *args, **kwargs)
 
