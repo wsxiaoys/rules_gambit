@@ -1,5 +1,7 @@
 # rules_gambit
 
+[![Build Status](https://travis-ci.org/wsxiaoys/rules_gambit.svg?branch=master)](https://travis-ci.org/wsxiaoys/rules_gambit)
+
 Bazel rules for with [Gambit Scheme](http://gambitscheme.org)
 
 To use in bazel, add following snippet to your WORKSPACE file.
