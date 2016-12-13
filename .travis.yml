@@ -36,4 +36,4 @@ before_install:
 
 script:
   - |
-    ./run_tests.sh
+    ./tests/run_tests.sh
