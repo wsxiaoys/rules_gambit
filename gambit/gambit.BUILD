@@ -20,6 +20,10 @@ GAMBIT_LIBRARY_COPTS = GAMBIT_COPTS + [
     "-D___LIBRARY",
 ]
 
+GAMBIT_LINKOPTS = [
+    "-lm", "-ldl", "-lutil",
+]
+
 GAMBIT_HEADERS = [
     "include/gambit.h",
     "include/config.h",
@@ -31,6 +35,7 @@ cc_library(
     srcs = glob(["lib/*.c"]),
     hdrs = glob(["lib/*.h"]) + GAMBIT_HEADERS,
     copts = GAMBIT_LIBRARY_COPTS,
+    linkopts = GAMBIT_LINKOPTS,
     includes = ["include"],
 )
 
