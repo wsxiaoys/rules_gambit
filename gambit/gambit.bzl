@@ -6,27 +6,44 @@ def gambit_repositories():
     strip_prefix = "gambit-4.8.6",
   )
 
+  native.new_git_repository(
+    name = "define_library",
+    remote = "https://github.com/feeley/define-library",
+    build_file = str(Label("//gambit:define-library.BUILD")),
+    commit = "56a6eda",
+  )
+
 
 def _gambit_cc_gen_impl(ctx):
-  gsc_args = ["-:~~=.,~~lib={}/lib".format(ctx.attr._gsc_deps.label.workspace_root)]
+  gsc_args = ["-:~~=.,~~dl=external/define_library,~~lib={}/lib".format(ctx.attr._gsc_deps.label.workspace_root)]
 
   inputs = [f for src in ctx.attr.srcs for f in src.files]
   headers = [f for hdr in ctx.attr.hdrs for f in hdr.files]
   outputs = [ctx.new_file(f.short_path + ".c") for f in inputs]
   for input, output in zip(inputs, outputs):
+    args = gsc_args + ["-o", output.path, "-c"]
+    if ctx.attr.enable_dl:
+      args += ["-e", "(load \"external/define_library/define-library.scm\") (set! dl#library-locations (list \"~~\" \"~~dl\"))"]
+    args += [input.path]
+
     ctx.action(
         executable = ctx.executable._gsc,
-        arguments = gsc_args + ["-o", output.path, "-c", input.path],
-        inputs = list(ctx.attr._gsc_deps.files | [input] | headers),
+        arguments = args,
+        inputs = list(ctx.attr._gsc_deps.files | [input] | headers | ctx.attr._dl.files | ctx.attr._dl_headers.files),
         outputs = [output])
   return struct(files=set(outputs))
 
 _gambit_cc_gen = rule(implementation = _gambit_cc_gen_impl,
     attrs = {
-      'srcs': attr.label_list(allow_files=True),
-      'hdrs': attr.label_list(allow_files=True),
+      "srcs": attr.label_list(allow_files=True),
+      "hdrs": attr.label_list(allow_files=True),
+      "enable_dl" : attr.bool(),
+
       "_gsc" : attr.label(default=Label("@gambit//:gsc"), executable=True, cfg="host"),
       "_gsc_deps" : attr.label(default=Label("@gambit//:gambit_compile_deps")),
+
+      "_dl": attr.label(default=Label("@define_library//:define-library")),
+      "_dl_headers": attr.label(default=Label("@define_library//:define-library-headers")),
     }
 )
 
@@ -56,21 +73,22 @@ def _gambit_cc_link_impl(ctx):
 
 _gambit_cc_link = rule(implementation = _gambit_cc_link_impl,
     attrs = {
-      'src': attr.label(),
-      'deps': attr.label_list(),
-      'dynamic': attr.bool(default=False, mandatory=True),
+      "src": attr.label(),
+      "deps": attr.label_list(),
+      "dynamic": attr.bool(default=False, mandatory=True),
       "_gsc" : attr.label(default=Label("@gambit//:gsc"), executable=True, cfg="host"),
       "_gsc_deps" : attr.label(default=Label("@gambit//:gambit_compile_deps")),
     },
 )
 
-def _gambit_core(name, srcs, deps, hdrs, dynamic):
+def _gambit_core(name, srcs, deps, hdrs, dynamic, enable_dl):
   native.filegroup(
       name = name + "_geninc",
       srcs = hdrs)
   _gambit_cc_gen(name = name + "_gencc",
       srcs=srcs,
-      hdrs=[x + "_geninc" for x in deps] + [name + "_geninc"])
+      hdrs=[x + "_geninc" for x in deps] + [name + "_geninc"],
+      enable_dl=enable_dl)
   _gambit_cc_link(
       name = name + "_genlink",
       src = name + "_gencc",
@@ -78,8 +96,8 @@ def _gambit_core(name, srcs, deps, hdrs, dynamic):
       deps=[x + "_genlink" for x in deps])
 
 
-def _gambit_dynamic(name, srcs=[], deps=[], hdrs=[], cdeps=[], copts=[], *args, **kwargs):
-  _gambit_core(name, srcs, deps, hdrs, True)
+def _gambit_dynamic(name, srcs=[], deps=[], hdrs=[], cdeps=[], copts=[], enable_define_library=False, *args, **kwargs):
+  _gambit_core(name, srcs, deps, hdrs, True, enable_define_library)
   native.cc_binary(
       name="lib" + name + ".so",
       srcs= [name + "_gencc", name + "_genlink"] if len(srcs) else [],
@@ -94,8 +112,8 @@ def _gambit_dynamic(name, srcs=[], deps=[], hdrs=[], cdeps=[], copts=[], *args, 
       output_to_bindir=True,
       cmd="cp $< $@")
 
-def _gambit_static(cc_rule, name, srcs=[], deps=[], hdrs=[], cdeps=[], *args, **kwargs):
-  _gambit_core(name, srcs, deps, hdrs, False)
+def _gambit_static(cc_rule, name, srcs=[], deps=[], hdrs=[], cdeps=[], enable_define_library=False, *args, **kwargs):
+  _gambit_core(name, srcs, deps, hdrs, False, enable_define_library)
   cc_rule(
       name=name,
       srcs=[name + "_gencc", name + "_genlink"] if len(srcs) else [],
