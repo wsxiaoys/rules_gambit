@@ -191,7 +191,7 @@ gambit_r7rs_library(name, src, *args, **kwargs)
 Sugar for `gambit_library(name, srcs=[src], hdrs=[src], enable_define_library=True, *args, **kwargs)`
 
 <a name="gambit_r7rs_binary"></a>
-## gambit_r7rs_library
+## gambit_r7rs_binary
 ```python
 gambit_r7rs_binary(name, src, *args, **kwargs)
 ```
