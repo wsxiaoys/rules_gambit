@@ -7,9 +7,19 @@ gambit_library(
     enable_define_library = True,
 )
 
+gambit_library(
+    name = "when",
+    srcs = ["when.scm"],
+    hdrs = ["when.scm"],
+    enable_define_library = True,
+)
+
 gambit_binary(
     name = "main",
     srcs = ["main.scm"],
     enable_define_library = True,
-    deps = [":lib1"],
+    deps = [
+        ":lib1",
+        ":when",
+    ],
 )
