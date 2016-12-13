@@ -127,3 +127,9 @@ def gambit_library(name, *args, **kwargs):
 
 def gambit_binary(name, *args, **kwargs):
   _gambit_static(native.cc_binary, name, *args, **kwargs)
+
+def gambit_r7rs_library(name, srcs, *args, **kwargs):
+  gambit_library(name, srcs=srcs, hdrs=srcs, enable_define_library=True, *args, **kwargs)
+
+def gambit_r7rs_binary(name, srcs, *args, **kwargs):
+  gambit_binary(name, srcs=srcs, hdrs=srcs, enable_define_library=True, *args, **kwargs)
