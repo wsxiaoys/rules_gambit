@@ -14,4 +14,8 @@ gambit_library(
 gambit_binary(
     name = "main",
     srcs = ["main.scm"],
-    deps = [":f1", ":f2"])
+    deps = [
+        ":f1",
+        ":f2",
+    ],
+)
