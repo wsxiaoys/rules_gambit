@@ -37,7 +37,7 @@ gambit_library(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kw
 
 `gambit_library` defines two build target:
 * `name`: Static linked library. Underlying it's a `cc_library` target thus can be linked to any c libs / binaries.
-* `name.o1`: Dynamic linked library. Can be loaded to `gsc`/`gsi` directly with `load` primitive.
+* `name.o1`: Dynamic linked library. Can be used in `gsc`/`gsi` with `load` primitive.
 
 <table class="table table-condensed table-bordered table-params">
   <colgroup>
@@ -111,7 +111,7 @@ gambit_library(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kw
 <a name="gambit_binary"></a>
 ## gambit_binary
 ```python
-gambit_binary(name, srcs, hdrs, deps, cdeps, enable_define_library)
+gambit_binary(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kwargs)
 ```
 
 <table class="table table-condensed table-bordered table-params">
