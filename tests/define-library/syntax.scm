@@ -7,8 +7,8 @@
   (begin
 
     (define-syntax addn
-      (macro args
-        `(##+ ,(car args) ,(cadr args))))
+      (macro (a b)
+        `(##+ ,a ,b)))
 
     (define-syntax unless
       (lambda (x)
