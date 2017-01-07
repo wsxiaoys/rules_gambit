@@ -6,8 +6,8 @@ gambit_r7rs_library(
 )
 
 gambit_r7rs_library(
-    name = "when",
-    src = "when.scm",
+    name = "syntax",
+    src = "syntax.scm",
 )
 
 gambit_r7rs_binary(
@@ -15,6 +15,6 @@ gambit_r7rs_binary(
     src = "main.scm",
     deps = [
         ":lib1",
-        ":when",
+        ":syntax",
     ],
 )

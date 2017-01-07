@@ -8,9 +8,9 @@ def gambit_repositories():
 
   native.new_git_repository(
     name = "define_library",
-    remote = "https://github.com/feeley/define-library",
+    remote = "https://github.com/wsxiaoys/define-library",
     build_file = str(Label("//gambit:define-library.BUILD")),
-    commit = "56a6eda",
+    commit = "0e67678",
   )
 
 
