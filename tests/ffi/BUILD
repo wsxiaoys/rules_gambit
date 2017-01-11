@@ -1,5 +1,3 @@
-load("//gambit:gambit.bzl", "gambit_library", "gambit_binary")
-
 cc_library(
     name = "f1b",
     srcs = ["f1b.c"],

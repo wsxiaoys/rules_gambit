@@ -1,5 +1,3 @@
-load("//gambit:gambit.bzl", "gambit_r7rs_library", "gambit_r7rs_binary")
-
 gambit_r7rs_library(
     name = "lib1",
     src = "lib1.scm",
