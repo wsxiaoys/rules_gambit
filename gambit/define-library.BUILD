@@ -1,11 +1,11 @@
 package(default_visibility = ["//visibility:public"])
 
-filegroup(
-    name = "define-library-headers",
-    srcs = glob(["gambit/*.scm"]) + glob(["scheme/*/*.scm"])
+gambit_library(
+    name = "core",
+    hdrs = glob(["gambit/*.scm"]) + glob(["scheme/*/*.scm"])
 )
 
-filegroup(
+gambit_library(
     name = "define-library",
-    srcs = glob(["*.scm"], exclude=["test.scm", "when-unless.scm"])
+    hdrs = glob(["*.scm"], exclude=["test.scm", "when-unless.scm"])
 )

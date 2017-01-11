@@ -29,7 +29,7 @@ def _gambit_cc_gen_impl(ctx):
     ctx.action(
         executable = ctx.executable._gsc,
         arguments = args,
-        inputs = list(ctx.attr._gsc_deps.files | [input] | headers | ctx.attr._dl.files | ctx.attr._dl_headers.files),
+        inputs = list(ctx.attr._gsc_deps.files | [input] | headers),
         outputs = [output])
   return struct(files=set(outputs))
 
@@ -41,9 +41,6 @@ _gambit_cc_gen = rule(implementation = _gambit_cc_gen_impl,
 
       "_gsc" : attr.label(default=Label("@gambit//:gsc"), executable=True, cfg="host"),
       "_gsc_deps" : attr.label(default=Label("@gambit//:gambit_compile_deps")),
-
-      "_dl": attr.label(default=Label("@define_library//:define-library")),
-      "_dl_headers": attr.label(default=Label("@define_library//:define-library-headers")),
     }
 )
 
@@ -128,8 +125,10 @@ def gambit_library(name, *args, **kwargs):
 def gambit_binary(name, *args, **kwargs):
   _gambit_static(native.cc_binary, name, *args, **kwargs)
 
-def gambit_r7rs_library(name, src, *args, **kwargs):
-  gambit_library(name, srcs=[src], hdrs=[src], enable_define_library=True, *args, **kwargs)
+def gambit_r7rs_library(name, src, deps=[], *args, **kwargs):
+  deps += ["@define_library//:core", "@define_library//:define-library"]
+  gambit_library(name, srcs=[src], hdrs=[src], deps=deps, enable_define_library=True, *args, **kwargs)
 
-def gambit_r7rs_binary(name, src, *args, **kwargs):
-  gambit_binary(name, srcs=[src], hdrs=[src], enable_define_library=True, *args, **kwargs)
+def gambit_r7rs_binary(name, src, deps=[], *args, **kwargs):
+  deps += ["@define_library//:core", "@define_library//:define-library"]
+  gambit_binary(name, srcs=[src], hdrs=[src], deps=deps, enable_define_library=True, *args, **kwargs)
