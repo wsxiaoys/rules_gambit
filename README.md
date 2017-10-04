@@ -6,8 +6,6 @@
   <ul>
     <li><a href="#gambit_library">gambit_library</a></li>
     <li><a href="#gambit_binary">gambit_binary</a></li>
-    <li><a href="#gambit_r7rs_library">gambit_r7rs_library</a></li>
-    <li><a href="#gambit_r7rs_binary">gambit_r7rs_binary</a></li>
   </ul>
 </div>
 

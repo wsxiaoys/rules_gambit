@@ -11,7 +11,6 @@ os:
   - osx
 
 env:
-  - V=HEAD
   - V=0.6.0
 
 before_install:
@@ -20,12 +19,14 @@ before_install:
       OS=darwin
     else
       sysctl kernel.unprivileged_userns_clone=1
+      sudo apt-get update -q
+      sudo apt-get install libxml2-utils -y
       OS=linux
     fi
-    if [[ "${V}" == "HEAD" ]]; then
-      CI_BASE="http://ci.bazel.io/job/Bazel/JAVA_VERSION=1.8,PLATFORM_NAME=${OS}-x86_64/lastSuccessfulBuild/artifact/output/ci"
-      CI_ARTIFACT="`wget -qO- ${CI_BASE} | grep -o 'bazel-[^\"]*-installer.sh' | uniq`"
-      URL="${CI_BASE}/${CI_ARTIFACT}"
+    if [[ $V =~ .*rc[0-9]+.* ]]; then
+      PRE_RC=$(expr "$V" : '\([0-9.]*\)rc.*')
+      RC_PRC=$(expr "$V" : '[0-9.]*\(rc.*\)')
+      URL="https://storage.googleapis.com/bazel/${PRE_RC}/${RC_PRC}/bazel-${V}-installer-${OS}-x86_64.sh"
     else
       URL="https://github.com/bazelbuild/bazel/releases/download/${V}/bazel-${V}-installer-${OS}-x86_64.sh"
     fi
