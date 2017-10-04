@@ -1,1 +1,1 @@
-load("@//gambit:gambit.bzl", "gambit_library", "gambit_binary", "gambit_r7rs_library", "gambit_r7rs_binary")
+load("@//gambit:gambit.bzl", "gambit_library", "gambit_binary")

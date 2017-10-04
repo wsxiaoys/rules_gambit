@@ -32,7 +32,7 @@ gambit_repositories()
 <a name="gambit_library"></a>
 ## gambit_library
 ```python
-gambit_library(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kwargs)
+gambit_library(name, srcs, hdrs, deps, cdeps, *args, **kwargs)
 ```
 
 `gambit_library` defines two build target:
@@ -93,13 +93,6 @@ gambit_library(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kw
       </td>
     </tr>
     <tr>
-      <td><code>enable_define_library</code></td>
-      <td>
-        <code>Boolean, default=False</code>
-        <p>Enable define_library support.</p>
-      </td>
-    </tr>
-    <tr>
       <td><code>*args, **kwargs</code></td>
       <td>
       <p>Passed to underlying <code>cc_library</code></p>
@@ -111,7 +104,7 @@ gambit_library(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kw
 <a name="gambit_binary"></a>
 ## gambit_binary
 ```python
-gambit_binary(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kwargs)
+gambit_binary(name, srcs, hdrs, deps, cdeps, *args, **kwargs)
 ```
 
 <table class="table table-condensed table-bordered table-params">
@@ -168,13 +161,6 @@ gambit_binary(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kwa
       </td>
     </tr>
     <tr>
-      <td><code>enable_define_library</code></td>
-      <td>
-        <code>Boolean, default=False</code>
-        <p>Enable define_library support.</p>
-      </td>
-    </tr>
-    <tr>
       <td><code>*args, **kwargs</code></td>
       <td>
       <p>Passed to underlying <code>cc_binary</code></p>
@@ -182,17 +168,3 @@ gambit_binary(name, srcs, hdrs, deps, cdeps, enable_define_library, *args, **kwa
     </tr>
   </tbody>
 </table>
-
-<a name="gambit_r7rs_library"></a>
-## gambit_r7rs_library
-```python
-gambit_r7rs_library(name, src, *args, **kwargs)
-```
-Sugar for `gambit_library(name, srcs=[src], hdrs=[src], enable_define_library=True, *args, **kwargs)`
-
-<a name="gambit_r7rs_binary"></a>
-## gambit_r7rs_binary
-```python
-gambit_r7rs_binary(name, src, *args, **kwargs)
-```
-Sugar for `gambit_binary(name, srcs=[src], hdrs=[src], enable_define_library=True, *args, **kwargs)`
