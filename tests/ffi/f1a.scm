@@ -6,4 +6,4 @@
 
 (define (f1a-func)
     (display "f1a-func was called\n")
-      (f1b-hello))
+    (f1b-hello))

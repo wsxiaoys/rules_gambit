@@ -17,6 +17,7 @@ gambit_library(
 gambit_binary(
     name = "main",
     srcs = ["main.scm"],
+    hdrs = ["f3#.scm"],
     deps = [
         ":f1a",
         ":f2",
